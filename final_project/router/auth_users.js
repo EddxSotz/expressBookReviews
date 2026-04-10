@@ -3,7 +3,9 @@ const jwt = require('jsonwebtoken');
 const books = require("./booksdb.js");
 const regd_users = express.Router();
 
-const users = [];
+const users = [
+  { username: "Jon", password: "1234" },
+];
 
 const isValid = (username)=>{ //returns boolean
 
@@ -33,7 +35,7 @@ const authenticatedUser = (username,password)=>{ //returns boolean
 
 //only registered users can login
 regd_users.post("/login", (req,res) => {
-  const { username, password } = req.body;
+  const { username, password } = req.query;
 
   if (!username || !password) {
     return res.status(400).json({ message: "Username and password are required" });
@@ -51,8 +53,8 @@ regd_users.post("/login", (req,res) => {
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
   const isbn = req.params.isbn;
-  const { review } = req.body;
-  const username = req.user.username;
+  const { review } = req.query;
+  const username = req.query.username;
 
   if (!review) {
     return res.status(400).json({ message: "Review content is required" });
@@ -68,7 +70,7 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
 
 regd_users.delete("/auth/review/:isbn", (req, res) => {
   const isbn = req.params.isbn;
-  const username = req.user.username;
+  const username = req.query.username;
 
   if (books[isbn]) {
     delete books[isbn].reviews[username];
